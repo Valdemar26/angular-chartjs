@@ -7,3 +7,4 @@ This project is based on the [Angular 5 with Chart.js Tutorial](https://coursetr
 
 Visit [Coursetro Full Stack Tutorials &amp; Courses](https://coursetro.com) for more awesome content.
 Also, subscribe to the [Coursetro Youtube Channel](http://youtube.com/user/designcourse) for more.
+"# angular-chartjs" 
