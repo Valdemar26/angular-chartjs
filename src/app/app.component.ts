@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { WeatherService } from './weather.service';
 import { Chart } from 'chart.js';
 
@@ -7,25 +7,25 @@ import { Chart } from 'chart.js';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   chart = [];
-  
-  constructor(private _weather: WeatherService) {}
+
+  constructor(private weather: WeatherService) {}
 
   ngOnInit() {
-    this._weather.dailyForecast()
+    this.weather.dailyForecast()
       .subscribe(res => {
-        
-        let temp_max = res['list'].map(res => res.main.temp_max)
-        let temp_min = res['list'].map(res => res.main.temp_min)
-        let alldates = res['list'].map(res => res.dt)
 
-        let weatherDates = []
+        const temp_max = res['list'].map(res => res.main.temp_max);
+        const temp_min = res['list'].map(res => res.main.temp_min);
+        const alldates = res['list'].map(res => res.dt);
+
+        const weatherDates = [];
         alldates.forEach((res) => {
-          let jsdate = new Date(res * 1000)
-          weatherDates.push(jsdate.toLocaleTimeString('en', { year: 'numeric', month: 'short', day: 'numeric'}))
-        })
+          const jsdate = new Date(res * 1000);
+          weatherDates.push(jsdate.toLocaleTimeString('en', { year: 'numeric', month: 'short', day: 'numeric'}));
+        });
 
         this.chart = new Chart('canvas', {
           type: 'line',
@@ -46,8 +46,9 @@ export class AppComponent {
           },
           options: {
             legend: {
-              display: false
+              display: false,
             },
+
             scales: {
               xAxes: [{
                 display: true
@@ -57,8 +58,8 @@ export class AppComponent {
               }]
             }
           }
-        })
+        });
 
-      })
+      });
   }
 }
