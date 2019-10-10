@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { debounceTime, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs/Subscription';
+
 import { WeatherService } from './weather.service';
 import { Chart } from 'chart.js';
 
@@ -10,6 +13,9 @@ import { Chart } from 'chart.js';
 export class AppComponent implements OnInit {
 
   chart = [];
+  isDisabled = false;
+  subscriptions: Subscription = new Subscription();
+  @ViewChild('filtersInput', { static: false }) filtersInput: ElementRef<HTMLInputElement>;
 
   constructor(private weather: WeatherService) {}
 
@@ -62,4 +68,17 @@ export class AppComponent implements OnInit {
 
       });
   }
+
+  private subscribeForInputChanges(): void {
+    const subscription = this.filtersControl.valueChanges.pipe(
+      debounceTime(500)).subscribe((value) => {
+      if (value && this.selectedFilter.autocomplete) {
+        this.autocompleteResults$ = this.patientSearchService.getSearchAutocompleteResults(this.selectedFilter.key, value)
+          .pipe(switchMap(() => this.patientSearchService.searchAutocompleteResults$));
+      }
+    });
+
+    this.subscriptions.add(subscription);
+  }
+
 }

@@ -1,5 +1,10 @@
 <!--The content below is only a placeholder and can be replaced.-->
 
-<div *ngIf="chart">
+<input
+  placeholder="Search..."
+  #filtersInput
+  [disabled]='isDisabled'>
+
+<div *ngIf="chart" class="chart">
   <canvas id="canvas">{{ chart }}</canvas>
 </div>
