@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { Subscription } from 'rxjs/Subscription';
 import { FormControl } from '@angular/forms';
@@ -12,6 +12,7 @@ import { WeatherService } from './weather.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent implements OnInit, OnDestroy {
 
   chart = [];
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   filtersControl: FormControl = new FormControl();
 
   inputValue = '';
+  res;
 
   @ViewChild('filtersInput', { static: false }) filtersInput: ElementRef<HTMLInputElement>;
 
@@ -26,21 +28,26 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initCurrentCityWeather('Odessa');
-
     this.subscribeForInputChanges();
   }
 
   private initCurrentCityWeather(city) {
     this.weather.dailyForecast(city)
       .pipe(
-        catchError(err => of('get error!!!'))
+        tap((data) => console.log(data) ),
+        catchError(err => of('get error!!!')),
+        // switchMap(() => {
+        //   return this.weather.noData$;
+        // })
       )
-      .subscribe(res => {
-        console.log('response from server', res);
+      .subscribe(response => {
+        console.log(response);
 
-        const temp_max = res['list'].map(res => res.main.temp_max);
-        const temp_min = res['list'].map(res => res.main.temp_min);
-        const alldates = res['list'].map(res => res.dt);
+        console.log('response from server', response);
+
+        const temp_max = response['list'].map(res => res.main.temp_max);
+        const temp_min = response['list'].map(res => res.main.temp_min);
+        const alldates = response['list'].map(res => res.dt);
 
         const weatherDates = [];
         alldates.forEach((res) => {
@@ -80,9 +87,9 @@ export class AppComponent implements OnInit, OnDestroy {
             }
           }
         });
-
       },
       error => {
+        // this.res = error
         console.log(error);
       });
   }
