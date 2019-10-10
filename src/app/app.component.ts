@@ -1,6 +1,8 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { debounceTime, switchMap } from 'rxjs/operators';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { debounceTime } from 'rxjs/operators';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { FormControl } from '@angular/forms';
 
 import { WeatherService } from './weather.service';
 import { Chart } from 'chart.js';
@@ -10,11 +12,15 @@ import { Chart } from 'chart.js';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   chart = [];
-  isDisabled = false;
   subscriptions: Subscription = new Subscription();
+  filtersControl: FormControl = new FormControl();
+
+  // inputValue$ = Observable<string>;
+  inputValue = '';
+
   @ViewChild('filtersInput', { static: false }) filtersInput: ElementRef<HTMLInputElement>;
 
   constructor(private weather: WeatherService) {}
@@ -41,12 +47,12 @@ export class AppComponent implements OnInit {
               {
                 data: temp_max,
                 borderColor: '#3cba9f',
-                fill: false
+                fill: true
               },
               {
                 data: temp_min,
                 borderColor: '#ffcc00',
-                fill: false
+                fill: true
               },
             ]
           },
@@ -67,18 +73,24 @@ export class AppComponent implements OnInit {
         });
 
       });
+
+    this.subscribeForInputChanges();
   }
 
   private subscribeForInputChanges(): void {
+
     const subscription = this.filtersControl.valueChanges.pipe(
       debounceTime(500)).subscribe((value) => {
-      if (value && this.selectedFilter.autocomplete) {
-        this.autocompleteResults$ = this.patientSearchService.getSearchAutocompleteResults(this.selectedFilter.key, value)
-          .pipe(switchMap(() => this.patientSearchService.searchAutocompleteResults$));
-      }
+      // this.inputValue$ = value;
+      this.inputValue = value;
+      console.log(value);
     });
 
     this.subscriptions.add(subscription);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
 }

@@ -1,10 +1,19 @@
-<!--The content below is only a placeholder and can be replaced.-->
+<div class="wrapper">
+  <h3>Please type city name to find weather</h3>
+  <input
+    placeholder="Search..."
+    [formControl]="filtersControl"
+    #filtersInput>
 
-<input
-  placeholder="Search..."
-  #filtersInput
-  [disabled]='isDisabled'>
+  <h3 *ngIf="inputValue">Weather for <span>{{ inputValue }}</span></h3>
 
-<div *ngIf="chart" class="chart">
-  <canvas id="canvas">{{ chart }}</canvas>
+  <ng-container *ngIf="!inputValue">
+    <h3 class="no-city">
+      No city found... Try again!
+    </h3>
+  </ng-container>
+
+  <div *ngIf="chart" class="chart">
+    <canvas id="canvas">{{ chart }}</canvas>
+  </div>
 </div>
