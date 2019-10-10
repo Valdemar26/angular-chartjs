@@ -1,11 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { debounceTime } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
 import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
 import { FormControl } from '@angular/forms';
+import { Chart } from 'chart.js';
 
 import { WeatherService } from './weather.service';
-import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +18,6 @@ export class AppComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
   filtersControl: FormControl = new FormControl();
 
-  // inputValue$ = Observable<string>;
   inputValue = '';
 
   @ViewChild('filtersInput', { static: false }) filtersInput: ElementRef<HTMLInputElement>;
@@ -26,8 +25,18 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private weather: WeatherService) {}
 
   ngOnInit() {
-    this.weather.dailyForecast()
+    this.initCurrentCityWeather('Odessa');
+
+    this.subscribeForInputChanges();
+  }
+
+  private initCurrentCityWeather(city) {
+    this.weather.dailyForecast(city)
+      .pipe(
+        catchError(err => of('get error!!!'))
+      )
       .subscribe(res => {
+        console.log('response from server', res);
 
         const temp_max = res['list'].map(res => res.main.temp_max);
         const temp_min = res['list'].map(res => res.main.temp_min);
@@ -72,18 +81,21 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         });
 
+      },
+      error => {
+        console.log(error);
       });
-
-    this.subscribeForInputChanges();
   }
 
   private subscribeForInputChanges(): void {
 
     const subscription = this.filtersControl.valueChanges.pipe(
-      debounceTime(500)).subscribe((value) => {
+      debounceTime(1000),
+      distinctUntilChanged()
+    ).subscribe((value) => {
       // this.inputValue$ = value;
       this.inputValue = value;
-      console.log(value);
+      this.initCurrentCityWeather(value);
     });
 
     this.subscriptions.add(subscription);
