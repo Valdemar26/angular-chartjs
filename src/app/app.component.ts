@@ -29,18 +29,19 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initCurrentCityWeather('Odessa');
     this.subscribeForInputChanges();
+    this.weather.noData$.subscribe(
+      data => this.res = data
+    )
   }
 
   private initCurrentCityWeather(city) {
     this.weather.dailyForecast(city)
       .pipe(
-        tap((data) => console.log(data) ),
+        tap((data) => console.log('NO DATA:', data) ),
         catchError(err => of('get error!!!')),
-        // switchMap(() => {
-        //   return this.weather.noData$;
-        // })
       )
       .subscribe(response => {
+        this.res = ''
         console.log(response);
 
         console.log('response from server', response);
