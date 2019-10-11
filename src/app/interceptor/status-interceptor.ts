@@ -14,7 +14,7 @@ export class StatusInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
 
     if (request.method === 'GET') {
-      console.log(request)
+      console.log(request);
       return next
         .handle(request)
         .pipe(

@@ -9,12 +9,18 @@
 
   <ng-container *ngIf="!inputValue">
     <h3 class="no-city">
+      {{ res }}
       No city found... Try again!
     </h3>
   </ng-container>
 
-  <div *ngIf="chart" class="chart" >
+  <div *ngIf="chart && res != '404'; else emptyData" class="chart" >
     <canvas id="canvas">{{ chart }}</canvas>
-    {{res}}
+
   </div>
+
+  <ng-template #emptyData>
+    No city found!
+  </ng-template>
+
 </div>
