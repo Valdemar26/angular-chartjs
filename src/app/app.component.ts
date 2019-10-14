@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { Subscription } from 'rxjs/Subscription';
 import { FormControl } from '@angular/forms';
@@ -27,11 +27,11 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private weather: WeatherService) {}
 
   ngOnInit() {
-    this.initCurrentCityWeather('Odessa');
+    this.initCurrentCityWeather('Kyiv');
     this.subscribeForInputChanges();
     this.weather.noData$.subscribe(
       data => this.res = data
-    )
+    );
   }
 
   private initCurrentCityWeather(city) {
@@ -41,8 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
         catchError(err => of('get error!!!')),
       )
       .subscribe(response => {
-        this.res = ''
-        console.log(response);
+        this.res = '';
 
         console.log('response from server', response);
 
@@ -90,7 +89,6 @@ export class AppComponent implements OnInit, OnDestroy {
         });
       },
       error => {
-        // this.res = error
         console.log(error);
       });
   }
@@ -101,7 +99,6 @@ export class AppComponent implements OnInit, OnDestroy {
       debounceTime(1000),
       distinctUntilChanged()
     ).subscribe((value) => {
-      // this.inputValue$ = value;
       this.inputValue = value;
       this.initCurrentCityWeather(value);
     });
