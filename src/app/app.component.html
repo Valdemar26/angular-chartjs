@@ -7,16 +7,17 @@
 
   <h3 *ngIf="inputValue">Weather for <span>{{ inputValue }}</span></h3>
 
-  <ng-container *ngIf="!inputValue">
-    <h3 class="no-city">
-      {{ res }}
-      No city found... Try again!
-    </h3>
-  </ng-container>
+<!--  <ng-container *ngIf="!inputValue">-->
+<!--    <h3 class="no-city">-->
+<!--      {{ res }}-->
+<!--      No city found... Try again!-->
+<!--    </h3>-->
+<!--  </ng-container>-->
+
+  {{ chart }} {{ res }}
 
   <div *ngIf="chart && res != '404'; else emptyData" class="chart" >
     <canvas id="canvas">{{ chart }}</canvas>
-
   </div>
 
   <ng-template #emptyData>

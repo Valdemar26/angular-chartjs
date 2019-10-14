@@ -3,8 +3,7 @@ import { HttpRequest, HttpHandler, HttpInterceptor } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
-import { throwError } from 'rxjs/internal/observable/throwError';
-import {WeatherService} from '../weather.service';
+import { WeatherService } from '../weather.service';
 
 @Injectable()
 export class StatusInterceptor implements HttpInterceptor {
